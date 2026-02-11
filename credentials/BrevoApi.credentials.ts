@@ -1,6 +1,6 @@
 import {
 	IAuthenticateGeneric,
-	ICredentialTestRequest,
+	ICredentialDataDecryptedObject,
 	ICredentialType,
 	INodeProperties,
 } from 'n8n-workflow';
@@ -8,16 +8,17 @@ import {
 export class BrevoApi implements ICredentialType {
 	name = 'brevoApi';
 	displayName = 'Brevo API';
-	documentationUrl = 'https://developers.brevo.com/';
+	documentationUrl = 'https://developers.brevo.com/reference/getting-started-1';
 	properties: INodeProperties[] = [
 		{
 			displayName: 'API Key',
 			name: 'apiKey',
 			type: 'string',
-			typeOptions: { password: true },
+			typeOptions: {
+				password: true,
+			},
 			default: '',
-			required: true,
-			description: 'Your Brevo API key. Generate one from your Brevo account dashboard under Settings > API Keys.',
+			description: 'API key from Brevo dashboard under Account > SMTP & API > API Keys',
 		},
 	];
 
@@ -30,11 +31,12 @@ export class BrevoApi implements ICredentialType {
 		},
 	};
 
-	test: ICredentialTestRequest = {
-		request: {
-			baseURL: 'https://api.brevo.com/v3',
-			url: '/account',
-			method: 'GET',
+	test: IAuthenticateGeneric = {
+		type: 'generic',
+		properties: {
+			headers: {
+				'api-key': '={{$credentials.apiKey}}',
+			},
 		},
 	};
 }
