@@ -70,37 +70,37 @@ export class Brevo implements INodeType {
   },
   options: [
     {
-      name: 'Get Contacts Statistics',
-      value: 'contacts',
-      description: 'Get contacts statistics and information',
-      action: 'Get contacts statistics',
+      name: 'Get Contacts',
+      value: 'getContacts',
+      description: 'Get utility information for contacts',
+      action: 'Get contacts utility data',
     },
     {
-      name: 'Get Email Campaigns Statistics',
-      value: 'emailCampaigns',
-      description: 'Get email campaigns statistics and information',
-      action: 'Get email campaigns statistics',
+      name: 'Get Email Campaigns',
+      value: 'getEmailCampaigns',
+      description: 'Get utility information for email campaigns',
+      action: 'Get email campaigns utility data',
     },
     {
-      name: 'Get Transactional Emails Statistics',
-      value: 'transactionalEmails',
-      description: 'Get transactional emails statistics and information',
-      action: 'Get transactional emails statistics',
+      name: 'Get Transactional Emails',
+      value: 'getTransactionalEmails',
+      description: 'Get utility information for transactional emails',
+      action: 'Get transactional emails utility data',
     },
     {
-      name: 'Get SMS Statistics',
-      value: 'sms',
-      description: 'Get SMS statistics and information',
-      action: 'Get SMS statistics',
+      name: 'Get SMS',
+      value: 'getSms',
+      description: 'Get utility information for SMS',
+      action: 'Get SMS utility data',
     },
     {
-      name: 'Get Lists Statistics',
-      value: 'lists',
-      description: 'Get lists statistics and information',
-      action: 'Get lists statistics',
+      name: 'Get Lists',
+      value: 'getLists',
+      description: 'Get utility information for lists',
+      action: 'Get lists utility data',
     },
   ],
-  default: 'contacts',
+  default: 'getContacts',
 },
       // Parameter definitions
 ,
@@ -132,84 +132,76 @@ async function executeUtilityOperations(
   const operation = this.getNodeParameter('operation', 0) as string;
   
   const credentials = await this.getCredentials('brevoApi');
-  const baseUrl = credentials.baseUrl as string || 'https://api.brevo.com/v3';
   const apiKey = credentials.apiKey as string;
-
-  const requestOptions = {
-    headers: {
-      'api-key': apiKey,
-      'Content-Type': 'application/json',
-    },
-    json: true,
-  };
+  const baseUrl = (credentials.baseUrl as string) || 'https://api.brevo.com/v3';
 
   for (let i = 0; i < items.length; i++) {
     try {
       let result: any;
       let endpoint: string;
+      
+      const options: IHttpRequestOptions = {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'api-key': apiKey,
+          'content-type': 'application/json',
+        },
+        url: '',
+        json: {},
+      };
 
       switch (operation) {
-        case 'contacts':
-          endpoint = `${baseUrl}/utility/contacts`;
-          result = await this.helpers.httpRequest({
-            method: 'POST',
-            url: endpoint,
-            ...requestOptions,
-          });
+        case 'getContacts':
+          endpoint = '/utility/contacts';
+          options.url = `${baseUrl}${endpoint}`;
+          result = await this.helpers.httpRequest(options);
           break;
 
-        case 'emailCampaigns':
-          endpoint = `${baseUrl}/utility/emailCampaigns`;
-          result = await this.helpers.httpRequest({
-            method: 'POST',
-            url: endpoint,
-            ...requestOptions,
-          });
+        case 'getEmailCampaigns':
+          endpoint = '/utility/emailCampaigns';
+          options.url = `${baseUrl}${endpoint}`;
+          result = await this.helpers.httpRequest(options);
           break;
 
-        case 'transactionalEmails':
-          endpoint = `${baseUrl}/utility/transactionalEmails`;
-          result = await this.helpers.httpRequest({
-            method: 'POST',
-            url: endpoint,
-            ...requestOptions,
-          });
+        case 'getTransactionalEmails':
+          endpoint = '/utility/transactionalEmails';
+          options.url = `${baseUrl}${endpoint}`;
+          result = await this.helpers.httpRequest(options);
           break;
 
-        case 'sms':
-          endpoint = `${baseUrl}/utility/sms`;
-          result = await this.helpers.httpRequest({
-            method: 'POST',
-            url: endpoint,
-            ...requestOptions,
-          });
+        case 'getSms':
+          endpoint = '/utility/sms';
+          options.url = `${baseUrl}${endpoint}`;
+          result = await this.helpers.httpRequest(options);
           break;
 
-        case 'lists':
-          endpoint = `${baseUrl}/utility/lists`;
-          result = await this.helpers.httpRequest({
-            method: 'POST',
-            url: endpoint,
-            ...requestOptions,
-          });
+        case 'getLists':
+          endpoint = '/utility/lists';
+          options.url = `${baseUrl}${endpoint}`;
+          result = await this.helpers.httpRequest(options);
           break;
 
         default:
-          throw new NodeOperationError(this.getNode(), 'Unknown operation: ' + operation);
+          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
       }
 
-      returnData.push({ json: result, pairedItem: { item: i } });
+      returnData.push({
+        json: result,
+        pairedItem: { item: i },
+      });
+
     } catch (error) {
       if (this.continueOnFail()) {
-        returnData.push({ 
-          json: { error: error.message }, 
-          pairedItem: { item: i } 
+        returnData.push({
+          json: { error: error.message },
+          pairedItem: { item: i },
         });
       } else {
-        if (error.response?.body) {
-          throw new NodeApiError(this.getNode(), error.response.body);
+        if (error.httpCode) {
+          throw new NodeApiError(this.getNode(), error);
         }
-        throw error;
+        throw new NodeOperationError(this.getNode(), error.message);
       }
     }
   }
