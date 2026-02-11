@@ -8,18 +8,16 @@ import {
 export class BrevoApi implements ICredentialType {
 	name = 'brevoApi';
 	displayName = 'Brevo API';
-	documentationUrl = 'https://developers.brevo.com/reference/getting-started-1';
+	documentationUrl = 'https://developers.brevo.com/';
 	properties: INodeProperties[] = [
 		{
 			displayName: 'API Key',
 			name: 'apiKey',
 			type: 'string',
-			typeOptions: {
-				password: true,
-			},
+			typeOptions: { password: true },
 			default: '',
-			description: 'API key from your Brevo account dashboard under SMTP & API > API Keys',
 			required: true,
+			description: 'Your Brevo API key. Generate one from your Brevo account dashboard under Settings > API Keys.',
 		},
 	];
 
