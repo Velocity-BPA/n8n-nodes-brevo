@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-brevo",
-  "version": "1.0.0",
-  "description": "n8n community node for Brevo API integration",
+  "version": "1.1.0",
+  "description": "n8n community node for Brevo",
   "keywords": [
     "n8n-community-node-package"
   ],
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/velocitybpa/n8n-nodes-brevo.git"
+    "url": "git+https://github.com/velocitybpa/n8n-nodes-brevo.git"
   },
   "main": "index.js",
   "scripts": {
@@ -25,7 +25,7 @@
     "lintfix": "eslint nodes credentials package.json --fix",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "prepublishOnly": "npm run build && npm run lint -c .eslintrc.prepublish.js nodes credentials package.json"
+    "prepublishOnly": "npm run build && npm run lint -s"
   },
   "files": [
     "dist"
