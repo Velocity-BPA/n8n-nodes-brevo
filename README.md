@@ -8,25 +8,25 @@
 >
 > For licensing information, visit https://velobpa.com/licensing or contact licensing@velobpa.com.
 
-This n8n community node provides comprehensive integration with Brevo (formerly Sendinblue), the all-in-one digital marketing platform. With 1 utility resource, it enables seamless email marketing, transactional messaging, SMS campaigns, and CRM operations within your n8n workflows.
+This n8n community node provides utilities for working with Brevo (formerly Sendinblue) email marketing and transactional email services. With 1 resource implemented, it offers essential utility functions for managing your Brevo integrations, handling API responses, and streamlining email automation workflows.
 
 ![n8n Community Node](https://img.shields.io/badge/n8n-Community%20Node-blue)
 ![License](https://img.shields.io/badge/license-BSL--1.1-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
 ![Brevo API](https://img.shields.io/badge/Brevo-API%20v3-orange)
 ![Email Marketing](https://img.shields.io/badge/Email-Marketing-green)
-![SMS](https://img.shields.io/badge/SMS-Campaigns-purple)
+![Transactional](https://img.shields.io/badge/Transactional-Email-green)
 
 ## Features
 
-- **Email Campaign Management** - Create, send, and track email marketing campaigns with advanced segmentation
-- **Transactional Email Service** - Send automated transactional emails with real-time delivery tracking
-- **Contact & List Management** - Organize contacts, manage subscription lists, and handle opt-ins/opt-outs
-- **SMS Marketing** - Send SMS campaigns and transactional messages to mobile subscribers
-- **Template Operations** - Create and manage reusable email and SMS templates
-- **Analytics & Reporting** - Access detailed campaign statistics, delivery reports, and engagement metrics
-- **CRM Integration** - Manage deals, companies, and sales pipeline data
-- **Webhook Management** - Configure and manage webhooks for real-time event notifications
+- **API Response Validation** - Validate and parse Brevo API responses with comprehensive error checking
+- **Data Transformation** - Convert between n8n data formats and Brevo-compatible structures  
+- **Error Code Translation** - Transform Brevo error codes into human-readable messages
+- **Batch Processing Support** - Handle multiple operations with proper rate limiting and retry logic
+- **Template Helper Functions** - Utilities for working with Brevo email templates and dynamic content
+- **Webhook Payload Parsing** - Parse and validate incoming Brevo webhook notifications
+- **Contact Data Normalization** - Standardize contact information for consistent data handling
+- **Campaign Analytics Formatting** - Format campaign statistics and metrics for downstream processing
 
 ## Installation
 
@@ -61,9 +61,9 @@ n8n start
 
 | Field | Description | Required |
 |-------|-------------|----------|
-| API Key | Your Brevo API key from Account → SMTP & API → API Keys | ✓ |
-| Environment | API environment (production/sandbox) | ✓ |
-| Base URL | Brevo API base URL (default: https://api.brevo.com/v3) | ✗ |
+| API Key | Your Brevo API key from account settings | Yes |
+| Environment | API environment (production/sandbox) | No |
+| Timeout | Request timeout in milliseconds (default: 30000) | No |
 
 ## Resources & Operations
 
@@ -71,97 +71,74 @@ n8n start
 
 | Operation | Description |
 |-----------|-------------|
-| Send Email | Send transactional emails to individual or multiple recipients |
-| Send SMS | Send SMS messages to individual or multiple phone numbers |
-| Create Contact | Add new contacts to your Brevo account with custom attributes |
-| Update Contact | Modify existing contact information and attributes |
-| Delete Contact | Remove contacts from your account and all associated lists |
-| Get Contact | Retrieve detailed information about a specific contact |
-| List Contacts | Fetch contacts with filtering, sorting, and pagination options |
-| Create List | Create new contact lists for segmentation and targeting |
-| Update List | Modify existing list properties and settings |
-| Delete List | Remove contact lists from your account |
-| Get List | Retrieve information about a specific contact list |
-| List All Lists | Fetch all contact lists with optional filtering |
-| Add Contact to List | Subscribe contacts to specific lists |
-| Remove Contact from List | Unsubscribe contacts from lists |
-| Create Campaign | Create new email marketing campaigns |
-| Update Campaign | Modify existing campaign settings and content |
-| Delete Campaign | Remove campaigns from your account |
-| Send Campaign | Launch email campaigns to targeted audiences |
-| Get Campaign | Retrieve detailed campaign information and statistics |
-| List Campaigns | Fetch campaigns with filtering and pagination |
-| Create Template | Create reusable email or SMS templates |
-| Update Template | Modify existing template content and settings |
-| Delete Template | Remove templates from your account |
-| Get Template | Retrieve specific template information |
-| List Templates | Fetch all templates with optional filtering |
-| Get Account Info | Retrieve account information and plan details |
-| Create Webhook | Set up webhooks for real-time event notifications |
-| Update Webhook | Modify existing webhook configurations |
-| Delete Webhook | Remove webhooks from your account |
-| Get Webhook | Retrieve specific webhook information |
-| List Webhooks | Fetch all configured webhooks |
-| Get Statistics | Retrieve campaign and account statistics |
-| Create Deal | Add new deals to your CRM pipeline |
-| Update Deal | Modify existing deal information |
-| Delete Deal | Remove deals from your CRM |
-| Get Deal | Retrieve specific deal information |
-| List Deals | Fetch deals with filtering and pagination |
+| Validate Response | Validate and parse Brevo API responses with error checking |
+| Transform Data | Convert data between n8n and Brevo formats |
+| Parse Error | Convert Brevo error codes to readable messages |
+| Format Contact | Normalize contact data for Brevo compatibility |
+| Parse Webhook | Parse and validate Brevo webhook payloads |
+| Format Template Data | Prepare dynamic content for email templates |
+| Calculate Rate Limit | Determine optimal request timing based on API limits |
+| Batch Process | Handle multiple operations with proper queuing |
 
 ## Usage Examples
 
 ```javascript
-// Send a transactional email
+// Validate and parse a Brevo API response
 {
-  "to": [{"email": "customer@example.com", "name": "John Doe"}],
-  "subject": "Welcome to Our Service",
-  "htmlContent": "<h1>Welcome!</h1><p>Thank you for signing up.</p>",
-  "sender": {"email": "noreply@yourcompany.com", "name": "Your Company"},
-  "templateId": 1,
-  "params": {
-    "firstName": "John",
-    "welcomeBonus": "$10"
-  }
-}
-```
-
-```javascript
-// Create a new contact with attributes
-{
-  "email": "newuser@example.com",
-  "attributes": {
-    "FIRSTNAME": "Jane",
-    "LASTNAME": "Smith",
-    "SMS": "+1234567890",
-    "COMPANY": "Acme Corp"
+  "operation": "validateResponse",
+  "response": {
+    "statusCode": 200,
+    "body": {
+      "id": 123,
+      "email": "user@example.com",
+      "attributes": {}
+    }
   },
-  "listIds": [2, 5, 12],
-  "updateEnabled": true
+  "expectedFields": ["id", "email"]
 }
 ```
 
 ```javascript
-// Send SMS campaign
+// Transform contact data for Brevo format
 {
-  "recipient": "+1234567890",
-  "content": "Hi {{firstName}}, your order #{{orderNumber}} has shipped!",
-  "sender": "YourStore",
-  "type": "transactional",
-  "webUrl": "https://tracking.example.com/{{orderNumber}}"
+  "operation": "transformData",
+  "inputData": {
+    "firstName": "John",
+    "lastName": "Doe", 
+    "emailAddress": "john.doe@example.com",
+    "company": "Acme Corp"
+  },
+  "targetFormat": "brevoContact"
 }
 ```
 
 ```javascript
-// Create email campaign
+// Parse Brevo webhook payload
 {
-  "name": "Summer Sale 2024",
-  "subject": "🌞 Summer Sale - Up to 50% Off!",
-  "sender": {"email": "marketing@example.com", "name": "Marketing Team"},
-  "type": "classic",
-  "htmlContent": "<html><body>{{include:header}}Sale content here</body></html>",
-  "recipients": {"listIds": [1, 3, 7]},
-  "scheduledAt": "2024-06-15T10:00:00Z"
+  "operation": "parseWebhook",
+  "webhookData": {
+    "event": "delivered",
+    "email": "recipient@example.com",
+    "id": 456,
+    "date": "2024-01-15T10:30:00Z"
+  },
+  "validateSignature": true
+}
+```
+
+```javascript
+// Format template data with dynamic content
+{
+  "operation": "formatTemplateData",
+  "templateId": 15,
+  "dynamicData": {
+    "FNAME": "John",
+    "COMPANY": "Acme Corp",
+    "PRODUCT": "Premium Plan"
+  },
+  "personalizations": {
+    "subject": "Welcome {{FNAME}} to {{COMPANY}}"
+  }
 }
 ```
 
@@ -169,12 +146,12 @@ n8n start
 
 | Error | Description | Solution |
 |-------|-------------|----------|
-| 401 Unauthorized | Invalid or missing API key | Verify API key in credentials configuration |
-| 400 Bad Request | Invalid request parameters or missing required fields | Check request payload format and required parameters |
-| 404 Not Found | Resource (contact, campaign, etc.) does not exist | Verify resource ID and ensure it exists in your account |
-| 429 Too Many Requests | API rate limit exceeded | Implement delays between requests or reduce request frequency |
-| 402 Payment Required | Account limits reached or feature not available in plan | Upgrade account plan or check usage limits |
-| 500 Internal Server Error | Brevo API temporary issue | Retry request after delay or check Brevo status page |
+| Invalid API Key | Authentication failed with provided credentials | Verify API key in Brevo account settings |
+| Rate Limit Exceeded | Too many requests sent to Brevo API | Implement exponential backoff or use batch processing |
+| Invalid Email Format | Email address doesn't meet Brevo requirements | Validate email format before sending |
+| Template Not Found | Referenced email template doesn't exist | Check template ID and ensure template is active |
+| Webhook Signature Invalid | Webhook payload signature verification failed | Verify webhook secret and payload integrity |
+| Data Format Error | Input data doesn't match expected Brevo format | Use transform data operation to normalize input |
 
 ## Development
 
@@ -219,5 +196,5 @@ Contributions are welcome! Please ensure:
 ## Support
 
 - **Issues**: [GitHub Issues](https://github.com/Velocity-BPA/n8n-nodes-brevo/issues)
-- **Brevo API Documentation**: [https://developers.brevo.com](https://developers.brevo.com)
-- **Brevo Support**: [https://help.brevo.com](https://help.brevo.com)
+- **Brevo API Documentation**: [https://developers.brevo.com/](https://developers.brevo.com/)
+- **Brevo Community**: [https://community.brevo.com/](https://community.brevo.com/)
