@@ -87,143 +87,117 @@ describe('Utility Resource', () => {
     };
   });
 
-  describe('contacts operation', () => {
-    it('should successfully get contacts statistics', async () => {
-      const mockResponse = {
-        totalContacts: 1000,
-        activeContacts: 850,
-        inactiveContacts: 150,
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'contacts';
+  describe('getContacts operation', () => {
+    it('should successfully get contacts utility data', async () => {
+      const mockResponse = { contacts: { total: 100, active: 85 } };
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        if (param === 'operation') return 'getContacts';
         return undefined;
       });
-
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeUtilityOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const items = [{ json: {} }];
+      const result = await executeUtilityOperations.call(mockExecuteFunctions, items);
 
       expect(result).toHaveLength(1);
       expect(result[0].json).toEqual(mockResponse);
       expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
         method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'api-key': 'test-api-key',
+          'content-type': 'application/json',
+        },
         url: 'https://api.brevo.com/v3/utility/contacts',
-        headers: {
-          'api-key': 'test-api-key',
-          'Content-Type': 'application/json',
-        },
-        json: true,
+        json: {},
       });
     });
 
-    it('should handle API errors for contacts operation', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'contacts';
+    it('should handle errors when getting contacts', async () => {
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        if (param === 'operation') return 'getContacts';
         return undefined;
       });
+      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
 
-      const mockError = new Error('API Error');
-      mockError.response = { body: { message: 'Invalid API key' } };
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(mockError);
+      const items = [{ json: {} }];
 
-      await expect(
-        executeUtilityOperations.call(mockExecuteFunctions, [{ json: {} }])
-      ).rejects.toThrow();
+      await expect(executeUtilityOperations.call(mockExecuteFunctions, items)).rejects.toThrow('API Error');
     });
   });
 
-  describe('emailCampaigns operation', () => {
-    it('should successfully get email campaigns statistics', async () => {
-      const mockResponse = {
-        totalCampaigns: 50,
-        sentCampaigns: 45,
-        draftCampaigns: 5,
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'emailCampaigns';
+  describe('getEmailCampaigns operation', () => {
+    it('should successfully get email campaigns utility data', async () => {
+      const mockResponse = { emailCampaigns: { total: 50, sent: 45 } };
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        if (param === 'operation') return 'getEmailCampaigns';
         return undefined;
       });
-
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeUtilityOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const items = [{ json: {} }];
+      const result = await executeUtilityOperations.call(mockExecuteFunctions, items);
 
       expect(result).toHaveLength(1);
       expect(result[0].json).toEqual(mockResponse);
       expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
         method: 'POST',
-        url: 'https://api.brevo.com/v3/utility/emailCampaigns',
         headers: {
+          'accept': 'application/json',
           'api-key': 'test-api-key',
-          'Content-Type': 'application/json',
+          'content-type': 'application/json',
         },
-        json: true,
+        url: 'https://api.brevo.com/v3/utility/emailCampaigns',
+        json: {},
       });
     });
   });
 
-  describe('transactionalEmails operation', () => {
-    it('should successfully get transactional emails statistics', async () => {
-      const mockResponse = {
-        totalTransactionalEmails: 10000,
-        delivered: 9800,
-        bounced: 200,
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'transactionalEmails';
+  describe('getTransactionalEmails operation', () => {
+    it('should successfully get transactional emails utility data', async () => {
+      const mockResponse = { transactionalEmails: { sent: 1000, delivered: 995 } };
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        if (param === 'operation') return 'getTransactionalEmails';
         return undefined;
       });
-
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeUtilityOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const items = [{ json: {} }];
+      const result = await executeUtilityOperations.call(mockExecuteFunctions, items);
 
       expect(result).toHaveLength(1);
       expect(result[0].json).toEqual(mockResponse);
     });
   });
 
-  describe('sms operation', () => {
-    it('should successfully get SMS statistics', async () => {
-      const mockResponse = {
-        totalSMS: 500,
-        sent: 480,
-        failed: 20,
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'sms';
+  describe('getSms operation', () => {
+    it('should successfully get SMS utility data', async () => {
+      const mockResponse = { sms: { sent: 500, delivered: 490 } };
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        if (param === 'operation') return 'getSms';
         return undefined;
       });
-
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeUtilityOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const items = [{ json: {} }];
+      const result = await executeUtilityOperations.call(mockExecuteFunctions, items);
 
       expect(result).toHaveLength(1);
       expect(result[0].json).toEqual(mockResponse);
     });
   });
 
-  describe('lists operation', () => {
-    it('should successfully get lists statistics', async () => {
-      const mockResponse = {
-        totalLists: 25,
-        activeLists: 20,
-        emptyLists: 5,
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'lists';
+  describe('getLists operation', () => {
+    it('should successfully get lists utility data', async () => {
+      const mockResponse = { lists: { total: 25, active: 20 } };
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        if (param === 'operation') return 'getLists';
         return undefined;
       });
-
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeUtilityOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const items = [{ json: {} }];
+      const result = await executeUtilityOperations.call(mockExecuteFunctions, items);
 
       expect(result).toHaveLength(1);
       expect(result[0].json).toEqual(mockResponse);
@@ -232,26 +206,26 @@ describe('Utility Resource', () => {
 
   describe('error handling', () => {
     it('should handle unknown operation', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'unknownOperation';
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        if (param === 'operation') return 'unknownOperation';
         return undefined;
       });
 
-      await expect(
-        executeUtilityOperations.call(mockExecuteFunctions, [{ json: {} }])
-      ).rejects.toThrow('Unknown operation: unknownOperation');
+      const items = [{ json: {} }];
+
+      await expect(executeUtilityOperations.call(mockExecuteFunctions, items)).rejects.toThrow('Unknown operation: unknownOperation');
     });
 
     it('should continue on fail when enabled', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'contacts';
+      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
+        if (param === 'operation') return 'getContacts';
         return undefined;
       });
-
       mockExecuteFunctions.continueOnFail.mockReturnValue(true);
       mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
 
-      const result = await executeUtilityOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const items = [{ json: {} }];
+      const result = await executeUtilityOperations.call(mockExecuteFunctions, items);
 
       expect(result).toHaveLength(1);
       expect(result[0].json).toEqual({ error: 'API Error' });
