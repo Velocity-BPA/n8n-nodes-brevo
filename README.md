@@ -8,25 +8,25 @@
 >
 > For licensing information, visit https://velobpa.com/licensing or contact licensing@velobpa.com.
 
-An n8n community node for integrating with Brevo (formerly Sendinblue), providing access to 5 core resources for email marketing automation, transactional messaging, and contact management. Manage contacts, lists, email campaigns, transactional emails, and SMS messaging directly from your n8n workflows.
+A comprehensive n8n community node for Brevo (formerly Sendinblue), providing access to 6 essential resources for email marketing automation, transactional messaging, and contact management. Features complete CRUD operations for contacts, campaign management, transactional email sending, SMS messaging, webhook handling, and sender management.
 
 ![n8n Community Node](https://img.shields.io/badge/n8n-Community%20Node-blue)
 ![License](https://img.shields.io/badge/license-BSL--1.1-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
-![Brevo API](https://img.shields.io/badge/Brevo-API%20v3-orange)
-![Email Marketing](https://img.shields.io/badge/Email-Marketing-green)
-![SMS](https://img.shields.io/badge/SMS-Messaging-purple)
+![Email Marketing](https://img.shields.io/badge/Email%20Marketing-Automation-green)
+![SMS](https://img.shields.io/badge/SMS-Messaging-orange)
+![Transactional](https://img.shields.io/badge/Transactional-Emails-purple)
 
 ## Features
 
-- **Contact Management** - Create, update, delete, and retrieve contacts with custom attributes and list assignments
-- **List Operations** - Manage contact lists, add/remove subscribers, and organize your audience segments
-- **Email Campaign Automation** - Create, schedule, and manage email marketing campaigns with templates and targeting
-- **Transactional Email Delivery** - Send personalized transactional emails with templates, attachments, and tracking
-- **SMS Messaging** - Send SMS messages to contacts with delivery tracking and campaign management
-- **Real-time Webhooks** - Handle Brevo webhook events for bounces, opens, clicks, and unsubscribes
-- **Batch Operations** - Efficiently process multiple contacts and operations in single requests
-- **Advanced Filtering** - Query contacts and campaigns with sophisticated filtering and search capabilities
+- **Contact Management** - Create, update, delete, and retrieve contacts with list management and attribute handling
+- **Campaign Operations** - Create, send, schedule, and monitor email campaigns with detailed analytics
+- **Transactional Email** - Send personalized transactional emails with templates, attachments, and tracking
+- **SMS Messaging** - Send SMS messages with delivery tracking and campaign management
+- **Webhook Management** - Create and manage webhooks for real-time event notifications
+- **Sender Management** - Manage sender identities, domain authentication, and email reputation
+- **Batch Operations** - Support for bulk contact imports and campaign operations
+- **Template Support** - Work with email templates and dynamic content insertion
 
 ## Installation
 
@@ -61,79 +61,76 @@ n8n start
 
 | Field | Description | Required |
 |-------|-------------|----------|
-| API Key | Your Brevo API key (found in Account → SMTP & API → API Keys) | Yes |
-| Environment | API environment (Production or Sandbox) | Yes |
+| API Key | Your Brevo API key from account settings | Yes |
 
 ## Resources & Operations
 
-### 1. Contacts
+### 1. Contact
 
 | Operation | Description |
 |-----------|-------------|
-| Create | Create a new contact with email, attributes, and list assignments |
+| Create | Create a new contact with attributes and list assignments |
 | Update | Update existing contact information and attributes |
 | Get | Retrieve contact details by email or ID |
-| Delete | Remove a contact from your account |
-| Get All | List contacts with filtering, sorting, and pagination |
-| Add to List | Add contact to specific contact lists |
-| Remove from List | Remove contact from specific contact lists |
+| Get All | List contacts with filtering and pagination |
+| Delete | Remove a contact from your database |
+| Add to List | Add contact to specific lists |
+| Remove from List | Remove contact from lists |
 
-### 2. Contact Lists
-
-| Operation | Description |
-|-----------|-------------|
-| Create | Create a new contact list with name and folder assignment |
-| Update | Update list name, folder, or other properties |
-| Get | Retrieve specific list details and statistics |
-| Delete | Delete a contact list (contacts remain in account) |
-| Get All | List all contact lists with folder organization |
-| Get Contacts | Retrieve all contacts within a specific list |
-| Add Contacts | Bulk add multiple contacts to a list |
-| Remove Contacts | Bulk remove contacts from a list |
-
-### 3. Email Campaigns
+### 2. Campaign
 
 | Operation | Description |
 |-----------|-------------|
-| Create | Create new email campaign with content, recipients, and settings |
-| Update | Update campaign content, subject, or targeting before sending |
-| Get | Retrieve campaign details, statistics, and performance metrics |
-| Delete | Delete a draft campaign (sent campaigns cannot be deleted) |
-| Get All | List campaigns with status filtering and pagination |
-| Send | Send or schedule a campaign for delivery |
-| Send Test | Send test email to specified addresses |
-| Get Statistics | Retrieve detailed campaign performance analytics |
+| Create | Create a new email campaign with content and settings |
+| Update | Update campaign details and content |
+| Send | Send a campaign immediately or schedule for later |
+| Get | Retrieve campaign details and statistics |
+| Get All | List all campaigns with filtering options |
+| Delete | Delete a campaign |
+| Get Statistics | Retrieve detailed campaign performance metrics |
 
-### 4. Transactional Emails
+### 3. TransactionalEmail
 
 | Operation | Description |
 |-----------|-------------|
-| Send | Send transactional email with template or custom content |
+| Send | Send transactional emails with templates or custom content |
 | Get | Retrieve sent email details and delivery status |
-| Get All | List sent transactional emails with filtering |
-| Get Templates | Retrieve available transactional email templates |
-| Get Template | Get specific template content and configuration |
-| Send Bulk | Send multiple transactional emails in batch |
-| Get SMTP Templates | List SMTP email templates |
-| Get Blocked Domains | Retrieve list of blocked email domains |
+| Get All | List transactional emails with filtering |
+| Get Statistics | Retrieve transactional email analytics |
 
-### 5. SMS
+### 4. SMS
 
 | Operation | Description |
 |-----------|-------------|
-| Send | Send SMS message to individual recipient or list |
-| Get | Retrieve SMS message details and delivery status |
-| Get All | List sent SMS messages with filtering and pagination |
-| Create Campaign | Create SMS marketing campaign |
-| Get Campaign | Retrieve SMS campaign details and statistics |
-| Get All Campaigns | List SMS campaigns with status filtering |
-| Send Test | Send test SMS to verify content and delivery |
-| Get Statistics | Retrieve SMS delivery and engagement analytics |
+| Send | Send SMS messages to individual or multiple recipients |
+| Get | Retrieve SMS details and delivery status |
+| Get All | List sent SMS messages |
+| Get Statistics | Retrieve SMS campaign analytics |
+
+### 5. Webhook
+
+| Operation | Description |
+|-----------|-------------|
+| Create | Create webhook endpoints for event notifications |
+| Update | Update webhook configuration and events |
+| Get | Retrieve webhook details and status |
+| Get All | List all configured webhooks |
+| Delete | Remove webhook endpoints |
+
+### 6. Sender
+
+| Operation | Description |
+|-----------|-------------|
+| Create | Add new sender identity with domain verification |
+| Update | Update sender details and configuration |
+| Get | Retrieve sender information and verification status |
+| Get All | List all sender identities |
+| Delete | Remove sender identity |
 
 ## Usage Examples
 
 ```javascript
-// Create a new contact with custom attributes
+// Create a new contact with attributes
 {
   "email": "john.doe@example.com",
   "attributes": {
@@ -141,51 +138,44 @@ n8n start
     "LASTNAME": "Doe",
     "COMPANY": "Acme Corp"
   },
-  "listIds": [1, 3],
+  "listIds": [2, 7],
   "updateEnabled": true
 }
 ```
 
 ```javascript
-// Send transactional email with template
+// Send a transactional email with template
 {
-  "templateId": 1,
-  "to": [
-    {
-      "email": "customer@example.com",
-      "name": "Customer Name"
-    }
-  ],
+  "templateId": 12,
+  "to": [{"email": "customer@example.com", "name": "Customer Name"}],
   "params": {
-    "ORDER_ID": "12345",
-    "PRODUCT_NAME": "Premium Plan",
-    "TOTAL": "$99.99"
+    "orderNumber": "ORD-123456",
+    "amount": "$99.99"
   },
   "tags": ["order-confirmation"]
 }
 ```
 
 ```javascript
-// Create email marketing campaign
+// Create and send an email campaign
 {
-  "name": "Monthly Newsletter - March 2024",
-  "subject": "Your March Updates Are Here!",
-  "htmlContent": "<html><body>Newsletter content here...</body></html>",
-  "recipients": {
-    "listIds": [2, 4]
-  },
-  "scheduledAt": "2024-03-15T10:00:00Z"
+  "name": "Monthly Newsletter",
+  "subject": "Your Monthly Update",
+  "sender": {"name": "Company Name", "email": "newsletter@company.com"},
+  "htmlContent": "<h1>Newsletter Content</h1>",
+  "recipients": {"listIds": [2, 5]},
+  "scheduledAt": "2024-02-15T10:00:00Z"
 }
 ```
 
 ```javascript
-// Send SMS message
+// Send SMS with delivery tracking
 {
-  "type": "transactional",
-  "content": "Your order #12345 has been shipped and will arrive by March 15th.",
-  "recipient": "+1234567890",
   "sender": "YourBrand",
-  "tag": "shipping-notification"
+  "recipient": "+1234567890",
+  "content": "Your verification code is: 123456",
+  "type": "transactional",
+  "tag": "verification"
 }
 ```
 
@@ -193,12 +183,12 @@ n8n start
 
 | Error | Description | Solution |
 |-------|-------------|----------|
-| 401 Unauthorized | Invalid or missing API key | Verify API key in credentials and check permissions |
-| 404 Not Found | Contact, list, or campaign doesn't exist | Confirm resource ID exists and is accessible |
-| 400 Bad Request | Invalid email format or missing required fields | Check email format and ensure all required fields are provided |
-| 429 Too Many Requests | API rate limit exceeded | Implement delays between requests or reduce request frequency |
-| 402 Payment Required | Account credit insufficient for SMS | Add credits to Brevo account or upgrade plan |
-| 500 Internal Server Error | Brevo API temporary issue | Retry request after delay or check Brevo status page |
+| Invalid API Key | Authentication failed with provided credentials | Verify API key in Brevo account settings |
+| Rate Limit Exceeded | Too many requests sent in short time period | Implement delays between requests or use batch operations |
+| Contact Already Exists | Attempting to create contact with existing email | Use update operation or enable updateEnabled flag |
+| Template Not Found | Referenced email template doesn't exist | Verify template ID in Brevo dashboard |
+| Invalid Email Format | Email address format validation failed | Ensure email addresses follow RFC standards |
+| Insufficient Credits | Account has insufficient email/SMS credits | Add credits to your Brevo account or upgrade plan |
 
 ## Development
 
@@ -244,4 +234,4 @@ Contributions are welcome! Please ensure:
 
 - **Issues**: [GitHub Issues](https://github.com/Velocity-BPA/n8n-nodes-brevo/issues)
 - **Brevo API Documentation**: [developers.brevo.com](https://developers.brevo.com)
-- **Brevo Help Center**: [help.brevo.com](https://help.brevo.com)
+- **Brevo Community**: [community.brevo.com](https://community.brevo.com)
