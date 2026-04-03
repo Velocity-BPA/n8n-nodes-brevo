@@ -1,17 +1,8 @@
 {
-  "name": "n8n-nodes-brevo",
-  "version": "2.0.0",
-  "description": "n8n community node for Brevo (formerly Sendinblue) email marketing and transactional email service",
-  "keywords": [
-    "n8n-community-node-package",
-    "brevo",
-    "sendinblue",
-    "email",
-    "sms",
-    "marketing",
-    "transactional"
-  ],
-  "license": "BSL-1.0",
+  "name": "@velocity-bpa/n8n-nodes-brevo",
+  "version": "1.0.0",
+  "description": "n8n community node for Brevo email marketing and transactional messaging platform",
+  "license": "bsl-catalog",
   "homepage": "https://n8n.io",
   "author": {
     "name": "Velocity BPA",
@@ -19,21 +10,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/velocitybpa/n8n-nodes-brevo.git"
+    "url": "https://github.com/velocity-bpa/n8n-nodes-brevo.git"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "packageManager": "pnpm@9.1.4",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && gulp build:icons",
     "dev": "tsc --watch",
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials package.json",
     "lintfix": "eslint nodes credentials package.json --fix",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
     "prepublishOnly": "npm run build"
   },
   "files": [
-    "dist"
+    "dist/**/*"
   ],
   "n8n": {
     "n8nNodesApiVersion": 1,
@@ -45,29 +38,19 @@
     ]
   },
   "devDependencies": {
-    "@types/node": "^20.10.0",
     "@typescript-eslint/parser": "^7.15.0",
-    "eslint-plugin-n8n-nodes-base": "^1.16.1",
-    "prettier": "^3.3.2",
-    "typescript": "^5.5.3",
-    "@types/jest": "^29.5.12",
+    "@types/node": "^20.14.8",
     "eslint": "^8.56.0",
+    "eslint-plugin-n8n-nodes-base": "^1.16.1",
     "gulp": "^4.0.2",
-    "jest": "^29.7.0",
     "n8n-workflow": "*",
-    "ts-jest": "^29.1.2",
-    "@typescript-eslint/eslint-plugin": "^7.0.0"
+    "prettier": "^3.3.2",
+    "typescript": "^5.5.3"
   },
-  "dependencies": {
-    "n8n-core": "*",
-    "n8n-workflow": "*"
-  },
-  "engines": {
-    "node": ">=18.10",
-    "pnpm": ">=9.1"
-  },
-  "packageManager": "pnpm@9.1.4",
   "peerDependencies": {
     "n8n-workflow": "*"
+  },
+  "dependencies": {
+    "axios": "^1.7.2"
   }
 }
