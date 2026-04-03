@@ -18,9 +18,8 @@ import {
   INodeTypeDescription,
   NodeOperationError,
   NodeApiError,
+  JsonObject,
 } from 'n8n-workflow';
-
-
 
 export class Brevo implements INodeType {
   description: INodeTypeDescription = {
@@ -51,16 +50,24 @@ export class Brevo implements INodeType {
         noDataExpression: true,
         options: [
           {
-            name: 'Contacts',
-            value: 'contacts',
+            name: 'Contact',
+            value: 'contact',
           },
           {
             name: 'ContactLists',
             value: 'contactLists',
           },
           {
+            name: 'Campaign',
+            value: 'campaign',
+          },
+          {
             name: 'EmailCampaigns',
             value: 'emailCampaigns',
+          },
+          {
+            name: 'TransactionalEmail',
+            value: 'transactionalEmail',
           },
           {
             name: 'TransactionalEmails',
@@ -69,9 +76,17 @@ export class Brevo implements INodeType {
           {
             name: 'SMS',
             value: 'sMS',
+          },
+          {
+            name: 'Webhook',
+            value: 'webhook',
+          },
+          {
+            name: 'Sender',
+            value: 'sender',
           }
         ],
-        default: 'contacts',
+        default: 'contact',
       },
       // Operation dropdowns per resource
 {
@@ -81,7 +96,7 @@ export class Brevo implements INodeType {
   noDataExpression: true,
   displayOptions: {
     show: {
-      resource: ['contacts'],
+      resource: ['contact'],
     },
   },
   options: [
@@ -120,6 +135,36 @@ export class Brevo implements INodeType {
       value: 'importContacts',
       description: 'Import contacts from file',
       action: 'Import contacts',
+    },
+    {
+      name: 'Get Contact Lists',
+      value: 'getContactLists',
+      description: 'Get all contact lists',
+      action: 'Get contact lists',
+    },
+    {
+      name: 'Create Contact List',
+      value: 'createContactList',
+      description: 'Create a new contact list',
+      action: 'Create contact list',
+    },
+    {
+      name: 'Get Contact List',
+      value: 'getContactList',
+      description: 'Get specific contact list details',
+      action: 'Get contact list',
+    },
+    {
+      name: 'Update Contact List',
+      value: 'updateContactList',
+      description: 'Update contact list name',
+      action: 'Update contact list',
+    },
+    {
+      name: 'Delete Contact List',
+      value: 'deleteContactList',
+      description: 'Delete a contact list',
+      action: 'Delete contact list',
     },
   ],
   default: 'createContact',
@@ -185,6 +230,23 @@ export class Brevo implements INodeType {
   name: 'operation',
   type: 'options',
   noDataExpression: true,
+  displayOptions: { show: { resource: ['campaign'] } },
+  options: [
+    { name: 'Create Email Campaign', value: 'createEmailCampaign', description: 'Create a new email campaign', action: 'Create email campaign' },
+    { name: 'Get Campaign', value: 'getCampaign', description: 'Get campaign details by ID', action: 'Get campaign' },
+    { name: 'Get All Campaigns', value: 'getAllCampaigns', description: 'Get all email campaigns', action: 'Get all campaigns' },
+    { name: 'Update Campaign', value: 'updateCampaign', description: 'Update campaign details', action: 'Update campaign' },
+    { name: 'Delete Campaign', value: 'deleteCampaign', description: 'Delete a campaign', action: 'Delete campaign' },
+    { name: 'Send Campaign', value: 'sendCampaign', description: 'Send campaign immediately', action: 'Send campaign' },
+    { name: 'Send Test Campaign', value: 'sendTestCampaign', description: 'Send test campaign to specific emails', action: 'Send test campaign' },
+  ],
+  default: 'createEmailCampaign',
+},
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
   displayOptions: {
     show: {
       resource: ['emailCampaigns'],
@@ -235,6 +297,62 @@ export class Brevo implements INodeType {
     },
   ],
   default: 'createCampaign',
+},
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+    },
+  },
+  options: [
+    {
+      name: 'Send Transactional Email',
+      value: 'sendTransactionalEmail',
+      description: 'Send a transactional email',
+      action: 'Send transactional email',
+    },
+    {
+      name: 'Get Email Templates',
+      value: 'getEmailTemplates',
+      description: 'Get all email templates',
+      action: 'Get email templates',
+    },
+    {
+      name: 'Create Email Template',
+      value: 'createEmailTemplate',
+      description: 'Create a new email template',
+      action: 'Create email template',
+    },
+    {
+      name: 'Get Email Template',
+      value: 'getEmailTemplate',
+      description: 'Get specific email template',
+      action: 'Get email template',
+    },
+    {
+      name: 'Update Email Template',
+      value: 'updateEmailTemplate',
+      description: 'Update email template',
+      action: 'Update email template',
+    },
+    {
+      name: 'Delete Email Template',
+      value: 'deleteEmailTemplate',
+      description: 'Delete email template',
+      action: 'Delete email template',
+    },
+    {
+      name: 'Get Transactional Email Events',
+      value: 'getTransactionalEmailEvents',
+      description: 'Get email events and statistics',
+      action: 'Get transactional email events',
+    },
+  ],
+  default: 'sendTransactionalEmail',
 },
 {
   displayName: 'Operation',
@@ -297,54 +415,15 @@ export class Brevo implements INodeType {
   name: 'operation',
   type: 'options',
   noDataExpression: true,
-  displayOptions: {
-    show: {
-      resource: ['sMS'],
-    },
-  },
+  displayOptions: { show: { resource: ['sMS'] } },
   options: [
-    {
-      name: 'Send Transactional SMS',
-      value: 'sendTransactionalSMS',
-      description: 'Send a transactional SMS message',
-      action: 'Send transactional SMS',
-    },
-    {
-      name: 'Get SMS Events',
-      value: 'getSMSEvents',
-      description: 'Get SMS events and statistics',
-      action: 'Get SMS events',
-    },
-    {
-      name: 'Create SMS Campaign',
-      value: 'createSMSCampaign',
-      description: 'Create a new SMS campaign',
-      action: 'Create SMS campaign',
-    },
-    {
-      name: 'Get All SMS Campaigns',
-      value: 'getAllSMSCampaigns',
-      description: 'Get all SMS campaigns',
-      action: 'Get all SMS campaigns',
-    },
-    {
-      name: 'Get SMS Campaign',
-      value: 'getSMSCampaign',
-      description: 'Get details of a specific SMS campaign',
-      action: 'Get SMS campaign',
-    },
-    {
-      name: 'Update SMS Campaign',
-      value: 'updateSMSCampaign',
-      description: 'Update an SMS campaign',
-      action: 'Update SMS campaign',
-    },
-    {
-      name: 'Delete SMS Campaign',
-      value: 'deleteSMSCampaign',
-      description: 'Delete an SMS campaign',
-      action: 'Delete SMS campaign',
-    },
+    { name: 'Send Transactional SMS', value: 'sendTransactionalSMS', description: 'Send a transactional SMS', action: 'Send transactional SMS' },
+    { name: 'Get SMS Events', value: 'getSMSEvents', description: 'Get SMS events and delivery statistics', action: 'Get SMS events' },
+    { name: 'Create SMS Campaign', value: 'createSMSCampaign', description: 'Create SMS campaign', action: 'Create SMS campaign' },
+    { name: 'Get All SMS Campaigns', value: 'getAllSMSCampaigns', description: 'Get all SMS campaigns', action: 'Get all SMS campaigns' },
+    { name: 'Get SMS Campaign', value: 'getSMSCampaign', description: 'Get SMS campaign details', action: 'Get SMS campaign' },
+    { name: 'Update SMS Campaign', value: 'updateSMSCampaign', description: 'Update SMS campaign', action: 'Update SMS campaign' },
+    { name: 'Delete SMS Campaign', value: 'deleteSMSCampaign', description: 'Delete SMS campaign', action: 'Delete SMS campaign' },
     {
       name: 'Send SMS Campaign Now',
       value: 'sendSMSCampaignNow',
@@ -354,6 +433,65 @@ export class Brevo implements INodeType {
   ],
   default: 'sendTransactionalSMS',
 },
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: {
+    show: {
+      resource: ['webhook'],
+    },
+  },
+  options: [
+    {
+      name: 'Create Webhook',
+      value: 'createWebhook',
+      description: 'Create a new webhook',
+      action: 'Create webhook',
+    },
+    {
+      name: 'Get All Webhooks',
+      value: 'getAllWebhooks',
+      description: 'Get all webhooks',
+      action: 'Get all webhooks',
+    },
+    {
+      name: 'Get Webhook',
+      value: 'getWebhook',
+      description: 'Get webhook details',
+      action: 'Get webhook',
+    },
+    {
+      name: 'Update Webhook',
+      value: 'updateWebhook',
+      description: 'Update webhook configuration',
+      action: 'Update webhook',
+    },
+    {
+      name: 'Delete Webhook',
+      value: 'deleteWebhook',
+      description: 'Delete a webhook',
+      action: 'Delete webhook',
+    },
+  ],
+  default: 'createWebhook',
+},
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: { show: { resource: ['sender'] } },
+  options: [
+    { name: 'Get All Senders', value: 'getAllSenders', description: 'Get all sender identities', action: 'Get all senders' },
+    { name: 'Create Sender', value: 'createSender', description: 'Create a new sender identity', action: 'Create sender' },
+    { name: 'Update Sender', value: 'updateSender', description: 'Update sender identity', action: 'Update sender' },
+    { name: 'Delete Sender', value: 'deleteSender', description: 'Delete sender identity', action: 'Delete sender' },
+    { name: 'Get Sender IPs', value: 'getSenderIps', description: 'Get IPs associated with sender', action: 'Get sender IPs' }
+  ],
+  default: 'getAllSenders',
+},
       // Parameter definitions
 {
   displayName: 'Email',
@@ -362,7 +500,7 @@ export class Brevo implements INodeType {
   required: true,
   displayOptions: {
     show: {
-      resource: ['contacts'],
+      resource: ['contact'],
       operation: ['createContact'],
     },
   },
@@ -378,7 +516,7 @@ export class Brevo implements INodeType {
   },
   displayOptions: {
     show: {
-      resource: ['contacts'],
+      resource: ['contact'],
       operation: ['createContact', 'updateContact'],
     },
   },
@@ -386,7 +524,7 @@ export class Brevo implements INodeType {
   description: 'Contact attributes',
   options: [
     {
-      name: 'attribute',
+      name: 'attributesValues',
       displayName: 'Attribute',
       values: [
         {
@@ -413,7 +551,7 @@ export class Brevo implements INodeType {
   type: 'string',
   displayOptions: {
     show: {
-      resource: ['contacts'],
+      resource: ['contact'],
       operation: ['createContact', 'updateContact', 'importContacts'],
     },
   },
@@ -426,7 +564,7 @@ export class Brevo implements INodeType {
   type: 'boolean',
   displayOptions: {
     show: {
-      resource: ['contacts'],
+      resource: ['contact'],
       operation: ['createContact'],
     },
   },
@@ -440,7 +578,7 @@ export class Brevo implements INodeType {
   required: true,
   displayOptions: {
     show: {
-      resource: ['contacts'],
+      resource: ['contact'],
       operation: ['getContact', 'updateContact', 'deleteContact'],
     },
   },
@@ -453,8 +591,8 @@ export class Brevo implements INodeType {
   type: 'number',
   displayOptions: {
     show: {
-      resource: ['contacts'],
-      operation: ['getAllContacts'],
+      resource: ['contact'],
+      operation: ['getAllContacts', 'getContactLists'],
     },
   },
   default: 50,
@@ -466,8 +604,8 @@ export class Brevo implements INodeType {
   type: 'number',
   displayOptions: {
     show: {
-      resource: ['contacts'],
-      operation: ['getAllContacts'],
+      resource: ['contact'],
+      operation: ['getAllContacts', 'getContactLists'],
     },
   },
   default: 0,
@@ -479,7 +617,7 @@ export class Brevo implements INodeType {
   type: 'dateTime',
   displayOptions: {
     show: {
-      resource: ['contacts'],
+      resource: ['contact'],
       operation: ['getAllContacts'],
     },
   },
@@ -492,8 +630,8 @@ export class Brevo implements INodeType {
   type: 'options',
   displayOptions: {
     show: {
-      resource: ['contacts'],
-      operation: ['getAllContacts'],
+      resource: ['contact'],
+      operation: ['getAllContacts', 'getContactLists'],
     },
   },
   options: [
@@ -518,13 +656,23 @@ export class Brevo implements INodeType {
   description: 'Sort the results by a specific criteria',
 },
 {
+  displayName: 'File Body',
+  name: 'fileBody',
+  type: 'string',
+  typeOptions: { rows: 4 },
+  required: true,
+  displayOptions: { show: { resource: ['contact'], operation: ['importContacts'] } },
+  default: '',
+  description: 'CSV content or file content for bulk import',
+},
+{
   displayName: 'File URL',
   name: 'fileUrl',
   type: 'string',
   required: true,
   displayOptions: {
     show: {
-      resource: ['contacts'],
+      resource: ['contact'],
       operation: ['importContacts'],
     },
   },
@@ -537,7 +685,7 @@ export class Brevo implements INodeType {
   type: 'string',
   displayOptions: {
     show: {
-      resource: ['contacts'],
+      resource: ['contact'],
       operation: ['importContacts'],
     },
   },
@@ -550,7 +698,7 @@ export class Brevo implements INodeType {
   type: 'fixedCollection',
   displayOptions: {
     show: {
-      resource: ['contacts'],
+      resource: ['contact'],
       operation: ['importContacts'],
     },
   },
@@ -578,6 +726,32 @@ export class Brevo implements INodeType {
       ],
     },
   ],
+},
+{
+  displayName: 'List ID',
+  name: 'listId',
+  type: 'number',
+  required: true,
+  displayOptions: { show: { resource: ['contact'], operation: ['getContactList', 'updateContactList', 'deleteContactList'] } },
+  default: 0,
+  description: 'Contact list ID',
+},
+{
+  displayName: 'Name',
+  name: 'name',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['contact'], operation: ['createContactList', 'updateContactList'] } },
+  default: '',
+  description: 'Contact list name',
+},
+{
+  displayName: 'Folder ID',
+  name: 'folderId',
+  type: 'number',
+  displayOptions: { show: { resource: ['contact'], operation: ['createContactList'] } },
+  default: 0,
+  description: 'Folder ID to organize the contact list',
 },
 {
   displayName: 'List Name',
@@ -784,6 +958,197 @@ export class Brevo implements INodeType {
   },
   default: '',
   description: 'Comma-separated list of email addresses to remove from the list',
+},
+{
+  displayName: 'Name',
+  name: 'name',
+  type: 'string',
+  required: true,
+  default: '',
+  displayOptions: { show: { resource: ['campaign'], operation: ['createEmailCampaign'] } },
+  description: 'Name of the campaign',
+},
+{
+  displayName: 'Subject',
+  name: 'subject',
+  type: 'string',
+  required: true,
+  default: '',
+  displayOptions: { show: { resource: ['campaign'], operation: ['createEmailCampaign'] } },
+  description: 'Subject line of the email campaign',
+},
+{
+  displayName: 'Sender Name',
+  name: 'senderName',
+  type: 'string',
+  required: true,
+  default: '',
+  displayOptions: { show: { resource: ['campaign'], operation: ['createEmailCampaign'] } },
+  description: 'Name of the sender',
+},
+{
+  displayName: 'Sender Email',
+  name: 'senderEmail',
+  type: 'string',
+  required: true,
+  default: '',
+  displayOptions: { show: { resource: ['campaign'], operation: ['createEmailCampaign'] } },
+  description: 'Email address of the sender',
+},
+{
+  displayName: 'HTML Content',
+  name: 'htmlContent',
+  type: 'string',
+  required: true,
+  default: '',
+  displayOptions: { show: { resource: ['campaign'], operation: ['createEmailCampaign'] } },
+  description: 'HTML content of the email',
+  typeOptions: { rows: 5 },
+},
+{
+  displayName: 'Recipients Type',
+  name: 'recipientsType',
+  type: 'options',
+  required: true,
+  default: 'listIds',
+  displayOptions: { show: { resource: ['campaign'], operation: ['createEmailCampaign'] } },
+  options: [
+    { name: 'List IDs', value: 'listIds' },
+    { name: 'Exclusion List IDs', value: 'exclusionListIds' },
+  ],
+  description: 'Type of recipients to target',
+},
+{
+  displayName: 'List IDs',
+  name: 'listIds',
+  type: 'string',
+  required: true,
+  default: '',
+  displayOptions: { show: { resource: ['campaign'], operation: ['createEmailCampaign'], recipientsType: ['listIds'] } },
+  description: 'Comma-separated list of contact list IDs to send the campaign to',
+},
+{
+  displayName: 'Exclusion List IDs',
+  name: 'exclusionListIds',
+  type: 'string',
+  required: false,
+  default: '',
+  displayOptions: { show: { resource: ['campaign'], operation: ['createEmailCampaign'] } },
+  description: 'Comma-separated list of contact list IDs to exclude from the campaign',
+},
+{
+  displayName: 'Campaign ID',
+  name: 'campaignId',
+  type: 'string',
+  required: true,
+  default: '',
+  displayOptions: { show: { resource: ['campaign'], operation: ['getCampaign', 'updateCampaign', 'deleteCampaign', 'sendCampaign', 'sendTestCampaign'] } },
+  description: 'ID of the campaign',
+},
+{
+  displayName: 'Type',
+  name: 'type',
+  type: 'options',
+  required: false,
+  default: '',
+  displayOptions: { show: { resource: ['campaign'], operation: ['getAllCampaigns'] } },
+  options: [
+    { name: 'Classic', value: 'classic' },
+    { name: 'Trigger', value: 'trigger' },
+  ],
+  description: 'Type of campaign to filter by',
+},
+{
+  displayName: 'Status',
+  name: 'status',
+  type: 'options',
+  required: false,
+  default: '',
+  displayOptions: { show: { resource: ['campaign'], operation: ['getAllCampaigns'] } },
+  options: [
+    { name: 'Draft', value: 'draft' },
+    { name: 'Sent', value: 'sent' },
+    { name: 'Archive', value: 'archive' },
+    { name: 'Queued', value: 'queued' },
+    { name: 'Suspended', value: 'suspended' },
+    { name: 'In Process', value: 'inProcess' },
+  ],
+  description: 'Status of campaigns to filter by',
+},
+{
+  displayName: 'Start Date',
+  name: 'startDate',
+  type: 'dateTime',
+  required: false,
+  default: '',
+  displayOptions: { show: { resource: ['campaign'], operation: ['getAllCampaigns'] } },
+  description: 'Start date to filter campaigns (YYYY-MM-DD format)',
+},
+{
+  displayName: 'End Date',
+  name: 'endDate',
+  type: 'dateTime',
+  required: false,
+  default: '',
+  displayOptions: { show: { resource: ['campaign'], operation: ['getAllCampaigns'] } },
+  description: 'End date to filter campaigns (YYYY-MM-DD format)',
+},
+{
+  displayName: 'Limit',
+  name: 'limit',
+  type: 'number',
+  required: false,
+  default: 50,
+  displayOptions: { show: { resource: ['campaign'], operation: ['getAllCampaigns'] } },
+  description: 'Number of campaigns to return (max 1000)',
+  typeOptions: { minValue: 1, maxValue: 1000 },
+},
+{
+  displayName: 'Offset',
+  name: 'offset',
+  type: 'number',
+  required: false,
+  default: 0,
+  displayOptions: { show: { resource: ['campaign'], operation: ['getAllCampaigns'] } },
+  description: 'Index of the first campaign to return',
+  typeOptions: { minValue: 0 },
+},
+{
+  displayName: 'Name',
+  name: 'name',
+  type: 'string',
+  required: false,
+  default: '',
+  displayOptions: { show: { resource: ['campaign'], operation: ['updateCampaign'] } },
+  description: 'New name of the campaign',
+},
+{
+  displayName: 'Subject',
+  name: 'subject',
+  type: 'string',
+  required: false,
+  default: '',
+  displayOptions: { show: { resource: ['campaign'], operation: ['updateCampaign'] } },
+  description: 'New subject line of the email campaign',
+},
+{
+  displayName: 'HTML Content',
+  name: 'htmlContent',
+  type: 'string',
+  required: false,
+  default: '',
+  displayOptions: { show: { resource: ['campaign'], operation: ['updateCampaign'] } },
+  description: 'New HTML content of the email',
+  typeOptions: { rows: 5 },
+},
+{
+  displayName: 'Email To',
+  name: 'emailTo',
+  type: 'string',
+  required: true,
+  default: '',
+  displayOptions: { show: { resource: ['campaign'], operation: ['sendTestCampaign'] } },
+  description: 'Comma-separated list of email addresses to send the test campaign to',
 },
 {
   displayName: 'Campaign Name',
@@ -1079,6 +1444,306 @@ export class Brevo implements INodeType {
   },
   default: '',
   description: 'Email address to send the test to',
+},
+{
+  displayName: 'Sender Email',
+  name: 'senderEmail',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+      operation: ['sendTransactionalEmail'],
+    },
+  },
+  default: '',
+  placeholder: 'sender@example.com',
+  description: 'Email address of the sender',
+},
+{
+  displayName: 'Sender Name',
+  name: 'senderName',
+  type: 'string',
+  required: false,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+      operation: ['sendTransactionalEmail'],
+    },
+  },
+  default: '',
+  description: 'Name of the sender',
+},
+{
+  displayName: 'To Email',
+  name: 'toEmail',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+      operation: ['sendTransactionalEmail'],
+    },
+  },
+  default: '',
+  placeholder: 'recipient@example.com',
+  description: 'Email address of the recipient',
+},
+{
+  displayName: 'To Name',
+  name: 'toName',
+  type: 'string',
+  required: false,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+      operation: ['sendTransactionalEmail'],
+    },
+  },
+  default: '',
+  description: 'Name of the recipient',
+},
+{
+  displayName: 'Subject',
+  name: 'subject',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+      operation: ['sendTransactionalEmail', 'createEmailTemplate'],
+    },
+  },
+  default: '',
+  description: 'Subject of the email',
+},
+{
+  displayName: 'HTML Content',
+  name: 'htmlContent',
+  type: 'string',
+  typeOptions: {
+    alwaysOpenEditWindow: true,
+  },
+  required: false,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+      operation: ['sendTransactionalEmail', 'createEmailTemplate', 'updateEmailTemplate'],
+    },
+  },
+  default: '',
+  description: 'HTML content of the email',
+},
+{
+  displayName: 'Text Content',
+  name: 'textContent',
+  type: 'string',
+  typeOptions: {
+    alwaysOpenEditWindow: true,
+  },
+  required: false,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+      operation: ['sendTransactionalEmail'],
+    },
+  },
+  default: '',
+  description: 'Text content of the email',
+},
+{
+  displayName: 'Template ID',
+  name: 'templateId',
+  type: 'number',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+      operation: ['getEmailTemplate', 'updateEmailTemplate', 'deleteEmailTemplate'],
+    },
+  },
+  default: 0,
+  description: 'ID of the email template',
+},
+{
+  displayName: 'Use Template ID',
+  name: 'useTemplateId',
+  type: 'boolean',
+  required: false,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+      operation: ['sendTransactionalEmail'],
+    },
+  },
+  default: false,
+  description: 'Whether to use a template ID instead of content',
+},
+{
+  displayName: 'Template ID',
+  name: 'templateIdSend',
+  type: 'number',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+      operation: ['sendTransactionalEmail'],
+      useTemplateId: [true],
+    },
+  },
+  default: 0,
+  description: 'ID of the email template to use',
+},
+{
+  displayName: 'Template Status',
+  name: 'templateStatus',
+  type: 'options',
+  options: [
+    {
+      name: 'True',
+      value: 'true',
+    },
+    {
+      name: 'False',
+      value: 'false',
+    },
+  ],
+  required: false,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+      operation: ['getEmailTemplates'],
+    },
+  },
+  default: '',
+  description: 'Status of the template',
+},
+{
+  displayName: 'Limit',
+  name: 'limit',
+  type: 'number',
+  required: false,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+      operation: ['getEmailTemplates', 'getTransactionalEmailEvents'],
+    },
+  },
+  default: 50,
+  description: 'Number of documents to retrieve',
+},
+{
+  displayName: 'Offset',
+  name: 'offset',
+  type: 'number',
+  required: false,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+      operation: ['getEmailTemplates', 'getTransactionalEmailEvents'],
+    },
+  },
+  default: 0,
+  description: 'Index of the first document in the page',
+},
+{
+  displayName: 'Template Name',
+  name: 'templateName',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+      operation: ['createEmailTemplate', 'updateEmailTemplate'],
+    },
+  },
+  default: '',
+  description: 'Name of the template',
+},
+{
+  displayName: 'Template Sender Email',
+  name: 'templateSenderEmail',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+      operation: ['createEmailTemplate'],
+    },
+  },
+  default: '',
+  placeholder: 'sender@example.com',
+  description: 'Email address of the sender for the template',
+},
+{
+  displayName: 'Template Sender Name',
+  name: 'templateSenderName',
+  type: 'string',
+  required: false,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+      operation: ['createEmailTemplate'],
+    },
+  },
+  default: '',
+  description: 'Name of the sender for the template',
+},
+{
+  displayName: 'Start Date',
+  name: 'startDate',
+  type: 'dateTime',
+  required: false,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+      operation: ['getTransactionalEmailEvents'],
+    },
+  },
+  default: '',
+  description: 'Mandatory if endDate is used. Starting date (YYYY-MM-DD) of the statistic events',
+},
+{
+  displayName: 'End Date',
+  name: 'endDate',
+  type: 'dateTime',
+  required: false,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+      operation: ['getTransactionalEmailEvents'],
+    },
+  },
+  default: '',
+  description: 'Mandatory if startDate is used. Ending date (YYYY-MM-DD) of the statistic events',
+},
+{
+  displayName: 'Days',
+  name: 'days',
+  type: 'number',
+  required: false,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+      operation: ['getTransactionalEmailEvents'],
+    },
+  },
+  default: 0,
+  description: 'Number of days in the past including today (positive integer)',
+},
+{
+  displayName: 'Email',
+  name: 'email',
+  type: 'string',
+  required: false,
+  displayOptions: {
+    show: {
+      resource: ['transactionalEmail'],
+      operation: ['getTransactionalEmailEvents'],
+    },
+  },
+  default: '',
+  description: 'Filter by specific email address',
 },
 {
   displayName: 'Sender',
@@ -1428,1219 +2093,30 @@ export class Brevo implements INodeType {
   name: 'sender',
   type: 'string',
   required: true,
-  displayOptions: {
-    show: {
-      resource: ['sMS'],
-      operation: ['sendTransactionalSMS'],
-    },
-  },
+  displayOptions: { show: { resource: ['sMS'], operation: ['sendTransactionalSMS'] } },
   default: '',
-  description: 'Name of the sender (max 11 characters)',
+  description: 'Name of the sender. Only alphanumeric characters.',
 },
 {
   displayName: 'Recipient',
   name: 'recipient',
   type: 'string',
   required: true,
-  displayOptions: {
-    show: {
-      resource: ['sMS'],
-      operation: ['sendTransactionalSMS'],
-    },
-  },
+  displayOptions: { show: { resource: ['sMS'], operation: ['sendTransactionalSMS'] } },
   default: '',
-  description: 'Mobile number to send the SMS (with country code)',
+  description: 'Mobile number to send SMS with the country code',
 },
 {
   displayName: 'Content',
   name: 'content',
   type: 'string',
   required: true,
-  displayOptions: {
-    show: {
-      resource: ['sMS'],
-      operation: ['sendTransactionalSMS', 'createSMSCampaign', 'updateSMSCampaign'],
-    },
-  },
+  displayOptions: { show: { resource: ['sMS'], operation: ['sendTransactionalSMS'] } },
   default: '',
-  description: 'Text content of the SMS',
+  description: 'Content of the SMS',
 },
 {
   displayName: 'Type',
   name: 'type',
   type: 'options',
-  displayOptions: {
-    show: {
-      resource: ['sMS'],
-      operation: ['sendTransactionalSMS'],
-    },
-  },
-  options: [
-    {
-      name: 'Transactional',
-      value: 'transactional',
-    },
-    {
-      name: 'Marketing',
-      value: 'marketing',
-    },
-  ],
-  default: 'transactional',
-  description: 'Type of SMS',
-},
-{
-  displayName: 'Tag',
-  name: 'tag',
-  type: 'string',
-  displayOptions: {
-    show: {
-      resource: ['sMS'],
-      operation: ['sendTransactionalSMS'],
-    },
-  },
-  default: '',
-  description: 'Tag to identify the SMS',
-},
-{
-  displayName: 'Limit',
-  name: 'limit',
-  type: 'number',
-  displayOptions: {
-    show: {
-      resource: ['sMS'],
-      operation: ['getSMSEvents', 'getAllSMSCampaigns'],
-    },
-  },
-  default: 50,
-  description: 'Number of items to return',
-},
-{
-  displayName: 'Offset',
-  name: 'offset',
-  type: 'number',
-  displayOptions: {
-    show: {
-      resource: ['sMS'],
-      operation: ['getSMSEvents', 'getAllSMSCampaigns'],
-    },
-  },
-  default: 0,
-  description: 'Index to start from',
-},
-{
-  displayName: 'Start Date',
-  name: 'startDate',
-  type: 'dateTime',
-  displayOptions: {
-    show: {
-      resource: ['sMS'],
-      operation: ['getSMSEvents'],
-    },
-  },
-  default: '',
-  description: 'Start date for filtering events',
-},
-{
-  displayName: 'End Date',
-  name: 'endDate',
-  type: 'dateTime',
-  displayOptions: {
-    show: {
-      resource: ['sMS'],
-      operation: ['getSMSEvents'],
-    },
-  },
-  default: '',
-  description: 'End date for filtering events',
-},
-{
-  displayName: 'Phone Number',
-  name: 'phoneNumber',
-  type: 'string',
-  displayOptions: {
-    show: {
-      resource: ['sMS'],
-      operation: ['getSMSEvents'],
-    },
-  },
-  default: '',
-  description: 'Filter events by phone number',
-},
-{
-  displayName: 'Event',
-  name: 'event',
-  type: 'options',
-  displayOptions: {
-    show: {
-      resource: ['sMS'],
-      operation: ['getSMSEvents'],
-    },
-  },
-  options: [
-    {
-      name: 'Sent',
-      value: 'sent',
-    },
-    {
-      name: 'Delivered',
-      value: 'delivered',
-    },
-    {
-      name: 'Bounce',
-      value: 'bounce',
-    },
-    {
-      name: 'Blocked',
-      value: 'blocked',
-    },
-  ],
-  default: 'sent',
-  description: 'Type of event to filter',
-},
-{
-  displayName: 'Campaign Name',
-  name: 'name',
-  type: 'string',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['sMS'],
-      operation: ['createSMSCampaign'],
-    },
-  },
-  default: '',
-  description: 'Name of the SMS campaign',
-},
-{
-  displayName: 'Campaign Name',
-  name: 'name',
-  type: 'string',
-  displayOptions: {
-    show: {
-      resource: ['sMS'],
-      operation: ['updateSMSCampaign'],
-    },
-  },
-  default: '',
-  description: 'Updated name of the SMS campaign',
-},
-{
-  displayName: 'Campaign Sender',
-  name: 'sender',
-  type: 'string',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['sMS'],
-      operation: ['createSMSCampaign'],
-    },
-  },
-  default: '',
-  description: 'Name of the sender for the campaign',
-},
-{
-  displayName: 'Recipients',
-  name: 'recipients',
-  type: 'string',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['sMS'],
-      operation: ['createSMSCampaign'],
-    },
-  },
-  default: '',
-  description: 'Recipients for the campaign (JSON format)',
-},
-{
-  displayName: 'Status',
-  name: 'status',
-  type: 'options',
-  displayOptions: {
-    show: {
-      resource: ['sMS'],
-      operation: ['getAllSMSCampaigns'],
-    },
-  },
-  options: [
-    {
-      name: 'Draft',
-      value: 'draft',
-    },
-    {
-      name: 'Sent',
-      value: 'sent',
-    },
-    {
-      name: 'Archive',
-      value: 'archive',
-    },
-    {
-      name: 'Queued',
-      value: 'queued',
-    },
-    {
-      name: 'Suspended',
-      value: 'suspended',
-    },
-  ],
-  default: 'draft',
-  description: 'Filter campaigns by status',
-},
-{
-  displayName: 'Campaign ID',
-  name: 'campaignId',
-  type: 'number',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['sMS'],
-      operation: ['getSMSCampaign', 'updateSMSCampaign', 'deleteSMSCampaign', 'sendSMSCampaignNow'],
-    },
-  },
-  default: 0,
-  description: 'ID of the SMS campaign',
-},
-    ],
-  };
-
-  async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-    const items = this.getInputData();
-    const resource = this.getNodeParameter('resource', 0) as string;
-
-    switch (resource) {
-      case 'contacts':
-        return [await executeContactsOperations.call(this, items)];
-      case 'contactLists':
-        return [await executeContactListsOperations.call(this, items)];
-      case 'emailCampaigns':
-        return [await executeEmailCampaignsOperations.call(this, items)];
-      case 'transactionalEmails':
-        return [await executeTransactionalEmailsOperations.call(this, items)];
-      case 'sMS':
-        return [await executeSMSOperations.call(this, items)];
-      default:
-        throw new NodeOperationError(this.getNode(), `The resource "${resource}" is not supported`);
-    }
-  }
-}
-
-// ============================================================
-// Resource Handler Functions
-// ============================================================
-
-async function executeContactsOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  
-  const credentials = await this.getCredentials('brevoApi');
-  const baseUrl = 'https://api.brevo.com/v3';
-  
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-      
-      switch (operation) {
-        case 'createContact':
-          const email = this.getNodeParameter('email', i) as string;
-          const attributes = this.getNodeParameter('attributes', i) as any;
-          const listIds = this.getNodeParameter('listIds', i) as string;
-          const updateEnabled = this.getNodeParameter('updateEnabled', i) as boolean;
-          
-          const createBody: any = { email };
-          
-          if (attributes.attribute?.length) {
-            createBody.attributes = {};
-            attributes.attribute.forEach((attr: any) => {
-              createBody.attributes[attr.name] = attr.value;
-            });
-          }
-          
-          if (listIds) {
-            createBody.listIds = listIds.split(',').map((id: string) => parseInt(id.trim()));
-          }
-          
-          if (updateEnabled) {
-            createBody.updateEnabled = updateEnabled;
-          }
-          
-          result = await this.helpers.httpRequest({
-            method: 'POST',
-            url: `${baseUrl}/contacts`,
-            body: createBody,
-            headers: {
-              'accept': 'application/json',
-              'content-type': 'application/json',
-              'api-key': credentials.apiKey,
-            },
-            json: true,
-          });
-          break;
-          
-        case 'getContact':
-          const identifier = this.getNodeParameter('identifier', i) as string;
-          
-          result = await this.helpers.httpRequest({
-            method: 'GET',
-            url: `${baseUrl}/contacts/${encodeURIComponent(identifier)}`,
-            headers: {
-              'accept': 'application/json',
-              'api-key': credentials.apiKey,
-            },
-            json: true,
-          });
-          break;
-          
-        case 'getAllContacts':
-          const limit = this.getNodeParameter('limit', i) as number;
-          const offset = this.getNodeParameter('offset', i) as number;
-          const modifiedSince = this.getNodeParameter('modifiedSince', i) as string;
-          const sort = this.getNodeParameter('sort', i) as string;
-          
-          const queryParams: any = { limit, offset };
-          
-          if (modifiedSince) {
-            queryParams.modifiedSince = new Date(modifiedSince).toISOString();
-          }
-          
-          if (sort) {
-            queryParams.sort = sort;
-          }
-          
-          const queryString = new URLSearchParams(queryParams).toString();
-          
-          result = await this.helpers.httpRequest({
-            method: 'GET',
-            url: `${baseUrl}/contacts?${queryString}`,
-            headers: {
-              'accept': 'application/json',
-              'api-key': credentials.apiKey,
-            },
-            json: true,
-          });
-          break;
-          
-        case 'updateContact':
-          const updateIdentifier = this.getNodeParameter('identifier', i) as string;
-          const updateAttributes = this.getNodeParameter('attributes', i) as any;
-          const updateListIds = this.getNodeParameter('listIds', i) as string;
-          
-          const updateBody: any = {};
-          
-          if (updateAttributes.attribute?.length) {
-            updateBody.attributes = {};
-            updateAttributes.attribute.forEach((attr: any) => {
-              updateBody.attributes[attr.name] = attr.value;
-            });
-          }
-          
-          if (updateListIds) {
-            updateBody.listIds = updateListIds.split(',').map((id: string) => parseInt(id.trim()));
-          }
-          
-          result = await this.helpers.httpRequest({
-            method: 'PUT',
-            url: `${baseUrl}/contacts/${encodeURIComponent(updateIdentifier)}`,
-            body: updateBody,
-            headers: {
-              'accept': 'application/json',
-              'content-type': 'application/json',
-              'api-key': credentials.apiKey,
-            },
-            json: true,
-          });
-          break;
-          
-        case 'deleteContact':
-          const deleteIdentifier = this.getNodeParameter('identifier', i) as string;
-          
-          result = await this.helpers.httpRequest({
-            method: 'DELETE',
-            url: `${baseUrl}/contacts/${encodeURIComponent(deleteIdentifier)}`,
-            headers: {
-              'accept': 'application/json',
-              'api-key': credentials.apiKey,
-            },
-            json: true,
-          });
-          break;
-          
-        case 'importContacts':
-          const fileUrl = this.getNodeParameter('fileUrl', i) as string;
-          const importListIds = this.getNodeParameter('listIds', i) as string;
-          const notifyUrl = this.getNodeParameter('notifyUrl', i) as string;
-          const newList = this.getNodeParameter('newList', i) as any;
-          
-          const importBody: any = { fileUrl };
-          
-          if (importListIds) {
-            importBody.listIds = importListIds.split(',').map((id: string) => parseInt(id.trim()));
-          }
-          
-          if (notifyUrl) {
-            importBody.notifyUrl = notifyUrl;
-          }
-          
-          if (newList.listData) {
-            importBody.newList = {
-              listName: newList.listData.listName,
-              folderId: newList.listData.folderId,
-            };
-          }
-          
-          result = await this.helpers.httpRequest({
-            method: 'POST',
-            url: `${baseUrl}/contacts/import`,
-            body: importBody,
-            headers: {
-              'accept': 'application/json',
-              'content-type': 'application/json',
-              'api-key': credentials.apiKey,
-            },
-            json: true,
-          });
-          break;
-          
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-      
-      returnData.push({ json: result, pairedItem: { item: i } });
-      
-    } catch (error) {
-      if (this.continueOnFail()) {
-        returnData.push({ json: { error: error.message }, pairedItem: { item: i } });
-      } else {
-        throw error;
-      }
-    }
-  }
-  
-  return returnData;
-}
-
-async function executeContactListsOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  
-  const credentials = await this.getCredentials('brevoApi');
-  const baseUrl = 'https://api.brevo.com/v3';
-  
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-      
-      switch (operation) {
-        case 'createList':
-          const createName = this.getNodeParameter('name', i) as string;
-          const createFolderId = this.getNodeParameter('folderId', i) as number;
-          
-          const createBody: any = { name: createName };
-          if (createFolderId) {
-            createBody.folderId = createFolderId;
-          }
-          
-          result = await this.helpers.httpRequest({
-            method: 'POST',
-            url: `${baseUrl}/contacts/lists`,
-            headers: {
-              'accept': 'application/json',
-              'content-type': 'application/json',
-              'api-key': credentials.apiKey,
-            },
-            body: createBody,
-            json: true,
-          });
-          break;
-          
-        case 'getAllLists':
-          const limit = this.getNodeParameter('limit', i) as number;
-          const offset = this.getNodeParameter('offset', i) as number;
-          const sort = this.getNodeParameter('sort', i) as string;
-          
-          const queryParams = new URLSearchParams();
-          if (limit) queryParams.append('limit', limit.toString());
-          if (offset) queryParams.append('offset', offset.toString());
-          if (sort) queryParams.append('sort', sort);
-          
-          result = await this.helpers.httpRequest({
-            method: 'GET',
-            url: `${baseUrl}/contacts/lists?${queryParams.toString()}`,
-            headers: {
-              'accept': 'application/json',
-              'api-key': credentials.apiKey,
-            },
-            json: true,
-          });
-          break;
-          
-        case 'getList':
-          const getListId = this.getNodeParameter('listId', i) as string;
-          
-          result = await this.helpers.httpRequest({
-            method: 'GET',
-            url: `${baseUrl}/contacts/lists/${getListId}`,
-            headers: {
-              'accept': 'application/json',
-              'api-key': credentials.apiKey,
-            },
-            json: true,
-          });
-          break;
-          
-        case 'updateList':
-          const updateListId = this.getNodeParameter('listId', i) as string;
-          const updateName = this.getNodeParameter('name', i) as string;
-          const updateFolderId = this.getNodeParameter('folderId', i) as number;
-          
-          const updateBody: any = {};
-          if (updateName) updateBody.name = updateName;
-          if (updateFolderId) updateBody.folderId = updateFolderId;
-          
-          result = await this.helpers.httpRequest({
-            method: 'PUT',
-            url: `${baseUrl}/contacts/lists/${updateListId}`,
-            headers: {
-              'accept': 'application/json',
-              'content-type': 'application/json',
-              'api-key': credentials.apiKey,
-            },
-            body: updateBody,
-            json: true,
-          });
-          break;
-          
-        case 'deleteList':
-          const deleteListId = this.getNodeParameter('listId', i) as string;
-          
-          result = await this.helpers.httpRequest({
-            method: 'DELETE',
-            url: `${baseUrl}/contacts/lists/${deleteListId}`,
-            headers: {
-              'accept': 'application/json',
-              'api-key': credentials.apiKey,
-            },
-            json: true,
-          });
-          break;
-          
-        case 'addContactsToList':
-          const addListId = this.getNodeParameter('listId', i) as string;
-          const addEmails = this.getNodeParameter('emails', i) as string;
-          
-          const addEmailsArray = addEmails.split(',').map(email => email.trim());
-          
-          result = await this.helpers.httpRequest({
-            method: 'POST',
-            url: `${baseUrl}/contacts/lists/${addListId}/contacts/add`,
-            headers: {
-              'accept': 'application/json',
-              'content-type': 'application/json',
-              'api-key': credentials.apiKey,
-            },
-            body: {
-              emails: addEmailsArray,
-            },
-            json: true,
-          });
-          break;
-          
-        case 'removeContactsFromList':
-          const removeListId = this.getNodeParameter('listId', i) as string;
-          const removeEmails = this.getNodeParameter('emails', i) as string;
-          
-          const removeEmailsArray = removeEmails.split(',').map(email => email.trim());
-          
-          result = await this.helpers.httpRequest({
-            method: 'POST',
-            url: `${baseUrl}/contacts/lists/${removeListId}/contacts/remove`,
-            headers: {
-              'accept': 'application/json',
-              'content-type': 'application/json',
-              'api-key': credentials.apiKey,
-            },
-            body: {
-              emails: removeEmailsArray,
-            },
-            json: true,
-          });
-          break;
-          
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-      
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error) {
-      if (this.continueOnFail()) {
-        returnData.push({ json: { error: error.message }, pairedItem: { item: i } });
-      } else {
-        throw new NodeApiError(this.getNode(), error);
-      }
-    }
-  }
-  
-  return returnData;
-}
-
-async function executeEmailCampaignsOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-
-  const credentials = await this.getCredentials('brevoApi');
-  const baseUrl = 'https://api.brevo.com/v3';
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-
-      switch (operation) {
-        case 'createCampaign':
-          const name = this.getNodeParameter('name', i) as string;
-          const subject = this.getNodeParameter('subject', i) as string;
-          const senderName = this.getNodeParameter('senderName', i) as string;
-          const senderEmail = this.getNodeParameter('senderEmail', i) as string;
-          const type = this.getNodeParameter('type', i) as string;
-          const htmlContent = this.getNodeParameter('htmlContent', i) as string;
-          const recipients = this.getNodeParameter('recipients', i) as string;
-
-          const recipientLists = recipients.split(',').map(id => parseInt(id.trim()));
-
-          const createBody = {
-            name,
-            subject,
-            sender: {
-              name: senderName,
-              email: senderEmail,
-            },
-            type,
-            htmlContent,
-            recipients: {
-              listIds: recipientLists,
-            },
-          };
-
-          result = await this.helpers.httpRequest({
-            method: 'POST',
-            url: `${baseUrl}/emailCampaigns`,
-            headers: {
-              'api-key': credentials.apiKey,
-              'Content-Type': 'application/json',
-            },
-            body: createBody,
-            json: true,
-          });
-          break;
-
-        case 'getAllCampaigns':
-          const typeFilter = this.getNodeParameter('typeFilter', i) as string;
-          const status = this.getNodeParameter('status', i) as string;
-          const limit = this.getNodeParameter('limit', i) as number;
-          const offset = this.getNodeParameter('offset', i) as number;
-
-          const queryParams = new URLSearchParams();
-          if (typeFilter) queryParams.append('type', typeFilter);
-          if (status) queryParams.append('status', status);
-          queryParams.append('limit', limit.toString());
-          queryParams.append('offset', offset.toString());
-
-          result = await this.helpers.httpRequest({
-            method: 'GET',
-            url: `${baseUrl}/emailCampaigns?${queryParams.toString()}`,
-            headers: {
-              'api-key': credentials.apiKey,
-            },
-            json: true,
-          });
-          break;
-
-        case 'getCampaign':
-          const campaignId = this.getNodeParameter('campaignId', i) as string;
-
-          result = await this.helpers.httpRequest({
-            method: 'GET',
-            url: `${baseUrl}/emailCampaigns/${campaignId}`,
-            headers: {
-              'api-key': credentials.apiKey,
-            },
-            json: true,
-          });
-          break;
-
-        case 'updateCampaign':
-          const updateCampaignId = this.getNodeParameter('campaignId', i) as string;
-          const updateName = this.getNodeParameter('name', i) as string;
-          const updateSubject = this.getNodeParameter('subject', i) as string;
-          const updateSenderName = this.getNodeParameter('senderName', i) as string;
-          const updateSenderEmail = this.getNodeParameter('senderEmail', i) as string;
-          const updateHtmlContent = this.getNodeParameter('htmlContent', i) as string;
-
-          const updateBody: any = {};
-          if (updateName) updateBody.name = updateName;
-          if (updateSubject) updateBody.subject = updateSubject;
-          if (updateSenderName || updateSenderEmail) {
-            updateBody.sender = {};
-            if (updateSenderName) updateBody.sender.name = updateSenderName;
-            if (updateSenderEmail) updateBody.sender.email = updateSenderEmail;
-          }
-          if (updateHtmlContent) updateBody.htmlContent = updateHtmlContent;
-
-          result = await this.helpers.httpRequest({
-            method: 'PUT',
-            url: `${baseUrl}/emailCampaigns/${updateCampaignId}`,
-            headers: {
-              'api-key': credentials.apiKey,
-              'Content-Type': 'application/json',
-            },
-            body: updateBody,
-            json: true,
-          });
-          break;
-
-        case 'deleteCampaign':
-          const deleteCampaignId = this.getNodeParameter('campaignId', i) as string;
-
-          result = await this.helpers.httpRequest({
-            method: 'DELETE',
-            url: `${baseUrl}/emailCampaigns/${deleteCampaignId}`,
-            headers: {
-              'api-key': credentials.apiKey,
-            },
-            json: true,
-          });
-          break;
-
-        case 'sendCampaignNow':
-          const sendCampaignId = this.getNodeParameter('campaignId', i) as string;
-
-          result = await this.helpers.httpRequest({
-            method: 'POST',
-            url: `${baseUrl}/emailCampaigns/${sendCampaignId}/sendNow`,
-            headers: {
-              'api-key': credentials.apiKey,
-            },
-            json: true,
-          });
-          break;
-
-        case 'sendTestEmail':
-          const testCampaignId = this.getNodeParameter('campaignId', i) as string;
-          const emailTo = this.getNodeParameter('emailTo', i) as string;
-
-          const testBody = {
-            emailTo: [emailTo],
-          };
-
-          result = await this.helpers.httpRequest({
-            method: 'POST',
-            url: `${baseUrl}/emailCampaigns/${testCampaignId}/sendTest`,
-            headers: {
-              'api-key': credentials.apiKey,
-              'Content-Type': 'application/json',
-            },
-            body: testBody,
-            json: true,
-          });
-          break;
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error) {
-      if (this.continueOnFail()) {
-        returnData.push({ json: { error: error.message }, pairedItem: { item: i } });
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  return returnData;
-}
-
-async function executeTransactionalEmailsOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  
-  const credentials = await this.getCredentials('brevoApi');
-  const baseUrl = credentials.baseUrl as string;
-  const apiKey = credentials.apiKey as string;
-  
-  const headers = {
-    'api-key': apiKey,
-    'Content-Type': 'application/json',
-  };
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-
-      switch (operation) {
-        case 'sendTransactionalEmail':
-          const sender = JSON.parse(this.getNodeParameter('sender', i) as string);
-          const to = JSON.parse(this.getNodeParameter('to', i) as string);
-          const subject = this.getNodeParameter('subject', i) as string;
-          const htmlContent = this.getNodeParameter('htmlContent', i) as string;
-          const textContent = this.getNodeParameter('textContent', i) as string;
-          const templateId = this.getNodeParameter('templateId', i) as number;
-          const params = JSON.parse(this.getNodeParameter('params', i) as string);
-
-          const emailData: any = {
-            sender,
-            to,
-          };
-
-          if (templateId) {
-            emailData.templateId = templateId;
-            if (Object.keys(params).length > 0) {
-              emailData.params = params;
-            }
-          } else {
-            emailData.subject = subject;
-            if (htmlContent) emailData.htmlContent = htmlContent;
-            if (textContent) emailData.textContent = textContent;
-          }
-
-          result = await this.helpers.httpRequest({
-            method: 'POST',
-            url: `${baseUrl}/smtp/email`,
-            headers,
-            json: emailData,
-          });
-          break;
-
-        case 'getAllTemplates':
-          const templateStatus = this.getNodeParameter('templateStatus', i) as string;
-          const limit = this.getNodeParameter('limit', i) as number;
-          const offset = this.getNodeParameter('offset', i) as number;
-
-          const templateParams: any = {};
-          if (templateStatus) templateParams.templateStatus = templateStatus;
-          if (limit) templateParams.limit = limit.toString();
-          if (offset) templateParams.offset = offset.toString();
-
-          const templateQuery = new URLSearchParams(templateParams).toString();
-          const templateUrl = `${baseUrl}/smtp/templates${templateQuery ? '?' + templateQuery : ''}`;
-
-          result = await this.helpers.httpRequest({
-            method: 'GET',
-            url: templateUrl,
-            headers,
-          });
-          break;
-
-        case 'getTemplate':
-          const getTemplateId = this.getNodeParameter('templateId', i) as number;
-          
-          result = await this.helpers.httpRequest({
-            method: 'GET',
-            url: `${baseUrl}/smtp/templates/${getTemplateId}`,
-            headers,
-          });
-          break;
-
-        case 'createTemplate':
-          const createTemplateName = this.getNodeParameter('templateName', i) as string;
-          const createSubject = this.getNodeParameter('subject', i) as string;
-          const createSender = JSON.parse(this.getNodeParameter('sender', i) as string);
-          const createHtmlContent = this.getNodeParameter('htmlContent', i) as string;
-
-          result = await this.helpers.httpRequest({
-            method: 'POST',
-            url: `${baseUrl}/smtp/templates`,
-            headers,
-            json: {
-              templateName: createTemplateName,
-              subject: createSubject,
-              sender: createSender,
-              htmlContent: createHtmlContent,
-            },
-          });
-          break;
-
-        case 'updateTemplate':
-          const updateTemplateId = this.getNodeParameter('templateId', i) as number;
-          const updateTemplateName = this.getNodeParameter('templateName', i) as string;
-          const updateSubject = this.getNodeParameter('subject', i) as string;
-          const updateHtmlContent = this.getNodeParameter('htmlContent', i) as string;
-
-          result = await this.helpers.httpRequest({
-            method: 'PUT',
-            url: `${baseUrl}/smtp/templates/${updateTemplateId}`,
-            headers,
-            json: {
-              templateName: updateTemplateName,
-              subject: updateSubject,
-              htmlContent: updateHtmlContent,
-            },
-          });
-          break;
-
-        case 'deleteTemplate':
-          const deleteTemplateId = this.getNodeParameter('templateId', i) as number;
-
-          result = await this.helpers.httpRequest({
-            method: 'DELETE',
-            url: `${baseUrl}/smtp/templates/${deleteTemplateId}`,
-            headers,
-          });
-          break;
-
-        case 'getEmailEvents':
-          const eventsLimit = this.getNodeParameter('limit', i) as number;
-          const eventsOffset = this.getNodeParameter('offset', i) as number;
-          const startDate = this.getNodeParameter('startDate', i) as string;
-          const endDate = this.getNodeParameter('endDate', i) as string;
-          const email = this.getNodeParameter('email', i) as string;
-          const event = this.getNodeParameter('event', i) as string;
-
-          const eventsParams: any = {};
-          if (eventsLimit) eventsParams.limit = eventsLimit.toString();
-          if (eventsOffset) eventsParams.offset = eventsOffset.toString();
-          if (startDate) eventsParams.startDate = startDate;
-          if (endDate) eventsParams.endDate = endDate;
-          if (email) eventsParams.email = email;
-          if (event) eventsParams.event = event;
-
-          const eventsQuery = new URLSearchParams(eventsParams).toString();
-          const eventsUrl = `${baseUrl}/smtp/statistics/events${eventsQuery ? '?' + eventsQuery : ''}`;
-
-          result = await this.helpers.httpRequest({
-            method: 'GET',
-            url: eventsUrl,
-            headers,
-          });
-          break;
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`, {
-            itemIndex: i,
-          });
-      }
-
-      returnData.push({ 
-        json: result || {}, 
-        pairedItem: { item: i } 
-      });
-
-    } catch (error) {
-      if (this.continueOnFail()) {
-        returnData.push({ 
-          json: { error: error.message }, 
-          pairedItem: { item: i } 
-        });
-      } else {
-        throw new NodeApiError(this.getNode(), error as JsonObject, { itemIndex: i });
-      }
-    }
-  }
-
-  return returnData;
-}
-
-async function executeSMSOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  
-  const credentials = await this.getCredentials('brevoApi');
-  const baseUrl = 'https://api.brevo.com/v3';
-  
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-      
-      switch (operation) {
-        case 'sendTransactionalSMS':
-          const sender = this.getNodeParameter('sender', i) as string;
-          const recipient = this.getNodeParameter('recipient', i) as string;
-          const content = this.getNodeParameter('content', i) as string;
-          const type = this.getNodeParameter('type', i, 'transactional') as string;
-          const tag = this.getNodeParameter('tag', i, '') as string;
-          
-          const smsData: any = {
-            sender,
-            recipient,
-            content,
-            type,
-          };
-          
-          if (tag) {
-            smsData.tag = tag;
-          }
-          
-          result = await this.helpers.httpRequest({
-            method: 'POST',
-            url: `${baseUrl}/transactionalSMS/sms`,
-            headers: {
-              'api-key': credentials.apiKey,
-              'Content-Type': 'application/json',
-            },
-            body: smsData,
-          });
-          break;
-          
-        case 'getSMSEvents':
-          const limit = this.getNodeParameter('limit', i, 50) as number;
-          const offset = this.getNodeParameter('offset', i, 0) as number;
-          const startDate = this.getNodeParameter('startDate', i, '') as string;
-          const endDate = this.getNodeParameter('endDate', i, '') as string;
-          const phoneNumber = this.getNodeParameter('phoneNumber', i, '') as string;
-          const event = this.getNodeParameter('event', i, '') as string;
-          
-          const queryParams = new URLSearchParams();
-          queryParams.append('limit', limit.toString());
-          queryParams.append('offset', offset.toString());
-          
-          if (startDate) queryParams.append('startDate', startDate);
-          if (endDate) queryParams.append('endDate', endDate);
-          if (phoneNumber) queryParams.append('phoneNumber', phoneNumber);
-          if (event) queryParams.append('event', event);
-          
-          result = await this.helpers.httpRequest({
-            method: 'GET',
-            url: `${baseUrl}/transactionalSMS/statistics/events?${queryParams.toString()}`,
-            headers: {
-              'api-key': credentials.apiKey,
-            },
-          });
-          break;
-          
-        case 'createSMSCampaign':
-          const campaignName = this.getNodeParameter('name', i) as string;
-          const campaignSender = this.getNodeParameter('sender', i) as string;
-          const campaignContent = this.getNodeParameter('content', i) as string;
-          const recipients = this.getNodeParameter('recipients', i) as string;
-          
-          let parsedRecipients;
-          try {
-            parsedRecipients = JSON.parse(recipients);
-          } catch (error) {
-            throw new NodeOperationError(this.getNode(), 'Recipients must be valid JSON');
-          }
-          
-          result = await this.helpers.httpRequest({
-            method: 'POST',
-            url: `${baseUrl}/smsCampaigns`,
-            headers: {
-              'api-key': credentials.apiKey,
-              'Content-Type': 'application/json',
-            },
-            body: {
-              name: campaignName,
-              sender: campaignSender,
-              content: campaignContent,
-              recipients: parsedRecipients,
-            },
-          });
-          break;
-          
-        case 'getAllSMSCampaigns':
-          const campaignStatus = this.getNodeParameter('status', i, '') as string;
-          const campaignLimit = this.getNodeParameter('limit', i, 50) as number;
-          const campaignOffset = this.getNodeParameter('offset', i, 0) as number;
-          
-          const campaignParams = new URLSearchParams();
-          campaignParams.append('limit', campaignLimit.toString());
-          campaignParams.append('offset', campaignOffset.toString());
-          
-          if (campaignStatus) campaignParams.append('status', campaignStatus);
-          
-          result = await this.helpers.httpRequest({
-            method: 'GET',
-            url: `${baseUrl}/smsCampaigns?${campaignParams.toString()}`,
-            headers: {
-              'api-key': credentials.apiKey,
-            },
-          });
-          break;
-          
-        case 'getSMSCampaign':
-          const getCampaignId = this.getNodeParameter('campaignId', i) as number;
-          
-          result = await this.helpers.httpRequest({
-            method: 'GET',
-            url: `${baseUrl}/smsCampaigns/${getCampaignId}`,
-            headers: {
-              'api-key': credentials.apiKey,
-            },
-          });
-          break;
-          
-        case 'updateSMSCampaign':
-          const updateCampaignId = this.getNodeParameter('campaignId', i) as number;
-          const updateName = this.getNodeParameter('name', i, '') as string;
-          const updateContent = this.getNodeParameter('content', i, '') as string;
-          
-          const updateData: any = {};
-          if (updateName) updateData.name = updateName;
-          if (updateContent) updateData.content = updateContent;
-          
-          result = await this.helpers.httpRequest({
-            method: 'PUT',
-            url: `${baseUrl}/smsCampaigns/${updateCampaignId}`,
-            headers: {
-              'api-key': credentials.apiKey,
-              'Content-Type': 'application/json',
-            },
-            body: updateData,
-          });
-          break;
-          
-        case 'deleteSMSCampaign':
-          const deleteCampaignId = this.getNodeParameter('campaignId', i) as number;
-          
-          result = await this.helpers.httpRequest({
-            method: 'DELETE',
-            url: `${baseUrl}/smsCampaigns/${deleteCampaignId}`,
-            headers: {
-              'api-key': credentials.apiKey,
-            },
-          });
-          break;
-          
-        case 'sendSMSCampaignNow':
-          const sendCampaignId = this.getNodeParameter('campaignId', i) as number;
-          
-          result = await this.helpers.httpRequest({
-            method: 'POST',
-            url: `${baseUrl}/smsCampaigns/${sendCampaignId}/sendNow`,
-            headers: {
-              'api-key': credentials.apiKey,
-              'Content-Type': 'application/json',
-            },
-          });
-          break;
-          
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-      
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error) {
-      if (this.continueOnFail()) {
-        returnData.push({ json: { error: error.message }, pairedItem: { item: i } });
-      } else {
-        throw error;
-      }
-    }
-  }
-  
-  return returnData;
-}
+  displayOptions: { show: { resource:
